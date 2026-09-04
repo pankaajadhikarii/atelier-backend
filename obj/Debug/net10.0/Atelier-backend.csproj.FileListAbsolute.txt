@@ -130,3 +130,4 @@ D:\MAC\6th-sem\net-centric\e-com project\Atelier-backend\bin\Debug\net10.0\ru\Mi
 D:\MAC\6th-sem\net-centric\e-com project\Atelier-backend\bin\Debug\net10.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\MAC\6th-sem\net-centric\e-com project\Atelier-backend\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\MAC\6th-sem\net-centric\e-com project\Atelier-backend\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+D:\MAC\6th-sem\net-centric\e-com project\Atelier-backend\obj\Debug\net10.0\Atelier-backend.sourcelink.json
