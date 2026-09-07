@@ -128,6 +128,9 @@ public class GarmentController : ControllerBase
             });
         }
 
-        return NoContent();
+        return Ok(new
+        {
+            message = "Garment deleted successfully."
+        });
     }
 }
