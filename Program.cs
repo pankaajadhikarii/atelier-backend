@@ -80,6 +80,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // Add Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGarmentService, GarmentService>();
+builder.Services.AddScoped<IDesignService, DesignService>();
 builder.Services.AddScoped<IAdminSetupService, AdminSetupService>();
 
 // Configure Admin settings
