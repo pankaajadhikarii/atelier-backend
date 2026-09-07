@@ -3,6 +3,7 @@ using Atelier_backend.Models.DTOs.Auth;
 using Atelier_backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Atelier_backend.Controllers;
 
@@ -55,7 +56,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("profile")]
     public async Task<ActionResult<UserProfileDto>> GetProfile()
     {
