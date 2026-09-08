@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +86,7 @@ builder.Services.AddScoped<IFabricService, FabricService>();
 builder.Services.AddScoped<
     IMeasurementProfileService,
     MeasurementProfileService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminSetupService, AdminSetupService>();
 
 // TODO: Database ma address register nai bhaxaina create garda address pathayeni
@@ -94,7 +96,12 @@ builder.Services.Configure<AdminSettings>(
     builder.Configuration.GetSection("Admin"));
 
 // Add Controllers and OpenAPI
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter());
+    });
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

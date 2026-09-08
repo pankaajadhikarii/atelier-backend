@@ -14,9 +14,8 @@ public class CreateOrderDto
     [Required]
     public int DesignId { get; set; }
 
-    public int? MeasurementProfileId { get; set; }
-
-    public string? MeasurementValuesJson { get; set; }
+    [Required]
+    public int MeasurementProfileId { get; set; }
 
     public FitType FitType { get; set; } = FitType.RegularFit;
 
@@ -24,11 +23,15 @@ public class CreateOrderDto
 
     public string? SpecialInstructions { get; set; }
 
-    [Range(0.1, 100.0, ErrorMessage = "Fabric quantity must be greater than 0.")]
+    [Range(
+        0.1,
+        100.0,
+        ErrorMessage = "Fabric quantity must be greater than 0.")]
     public decimal FabricQuantity { get; set; } = 1.0m;
 
     [Required]
-    public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.CashOnDelivery;
+    public PaymentMethod PaymentMethod { get; set; } =
+        PaymentMethod.CashOnDelivery;
 
     [Required(ErrorMessage = "Shipping address is required.")]
     [StringLength(300)]
