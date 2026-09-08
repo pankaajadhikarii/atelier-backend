@@ -113,6 +113,47 @@ public class OrderController : ControllerBase
         }
     }
 
+    // PATCH: /api/order/{id}/cancel
+    [HttpPatch("{id:int}/cancel")]
+    public async Task<ActionResult<OrderDto>>
+        CancelOrder(int id)
+    {
+        var customerId = GetCurrentCustomerId();
+
+        if (customerId == null)
+        {
+            return Unauthorized(new
+            {
+                message = "User identity could not be determined."
+            });
+        }
+
+        try
+        {
+            var order = await _orderService
+                .CancelAsync(
+                    id,
+                    customerId);
+
+            if (order == null)
+            {
+                return NotFound(new
+                {
+                    message = "Order not found."
+                });
+            }
+
+            return Ok(order);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new
+            {
+                message = ex.Message
+            });
+        }
+    }
+
     private string? GetCurrentCustomerId()
     {
         return User.FindFirstValue(

@@ -280,6 +280,39 @@ public class OrderService : IOrderService
         return MapToDto(createdOrder);
     }
 
+    public async Task<OrderDto?> CancelAsync(
+        int id,
+        string customerId)
+    {
+        var order = await _dbContext.Orders
+            .SingleOrDefaultAsync(order =>
+                order.Id == id &&
+                order.CustomerId == customerId);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        if (order.Status != OrderStatus.Pending)
+        {
+            throw new InvalidOperationException(
+                "Only pending orders can be cancelled.");
+        }
+
+        order.Status = OrderStatus.Cancelled;
+        order.UpdatedAt = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        var cancelledOrder = await GetOrderQuery()
+            .SingleAsync(order =>
+                order.Id == id &&
+                order.CustomerId == customerId);
+
+        return MapToDto(cancelledOrder);
+    }
+
     private IQueryable<Order> GetOrderQuery()
     {
         return _dbContext.Orders
@@ -317,9 +350,7 @@ public class OrderService : IOrderService
         return new OrderDto
         {
             Id = order.Id,
-
-            OrderNumber =
-                order.OrderNumber,
+            OrderNumber = order.OrderNumber,
 
             CustomerId =
                 order.CustomerId,
