@@ -82,6 +82,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGarmentService, GarmentService>();
 builder.Services.AddScoped<IDesignService, DesignService>();
 builder.Services.AddScoped<IFabricService, FabricService>();
+builder.Services.AddScoped<
+    IMeasurementProfileService,
+    MeasurementProfileService>();
 builder.Services.AddScoped<IAdminSetupService, AdminSetupService>();
 
 // TODO: Database ma address register nai bhaxaina create garda address pathayeni
