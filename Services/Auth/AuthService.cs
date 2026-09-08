@@ -39,6 +39,7 @@ public class AuthService : IAuthService
             UserName = registerDto.Email,
             Email = registerDto.Email,
             FullName = registerDto.FullName,
+            Address = registerDto.Address,
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
