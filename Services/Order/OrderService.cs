@@ -21,6 +21,10 @@ public class OrderService : IOrderService
         _dbContext = dbContext;
     }
 
+    // =========================================================
+    // CUSTOMER
+    // =========================================================
+
     public async Task<IReadOnlyList<OrderSummaryDto>> GetAllAsync(
         string customerId)
     {
@@ -297,11 +301,26 @@ public class OrderService : IOrderService
         if (order.Status != OrderStatus.Pending)
         {
             throw new InvalidOperationException(
-                "Only pending orders can be cancelled.");
+                $"Order cannot be cancelled because it is already in {order.Status} status.");
         }
 
-        order.Status = OrderStatus.Cancelled;
-        order.UpdatedAt = DateTime.UtcNow;
+        order.Status =
+            OrderStatus.Cancelled;
+
+        order.RejectionReason =
+            null;
+
+        order.UpdatedAt =
+            DateTime.UtcNow;
+
+        _dbContext.OrderStatusHistories.Add(
+            new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                Status = OrderStatus.Cancelled,
+                Notes = "Order cancelled by customer.",
+                Timestamp = order.UpdatedAt
+            });
 
         await _dbContext.SaveChangesAsync();
 
@@ -312,6 +331,129 @@ public class OrderService : IOrderService
 
         return MapToDto(cancelledOrder);
     }
+
+    // =========================================================
+    // ADMIN
+    // =========================================================
+
+    public async Task<IReadOnlyList<AdminOrderSummaryDto>>
+        GetAllAdminAsync()
+    {
+        var orders = await _dbContext.Orders
+            .AsNoTracking()
+            .Include(order => order.Customer)
+            .Include(order => order.Garment)
+            .Include(order => order.Design)
+            .OrderByDescending(order => order.OrderDate)
+            .ToListAsync();
+
+        return orders
+            .Select(order => new AdminOrderSummaryDto
+            {
+                Id = order.Id,
+                OrderNumber = order.OrderNumber,
+                CustomerId = order.CustomerId,
+                CustomerName = order.Customer.FullName,
+                CustomerEmail = order.Customer.Email ?? string.Empty,
+                CustomerPhone = order.Customer.PhoneNumber,
+                GarmentName = order.Garment.Name,
+                DesignName = order.Design.Name,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                PaymentStatus = order.PaymentStatus,
+                PaymentMethod = order.PaymentMethod,
+                OrderDate = order.OrderDate,
+                UpdatedAt = order.UpdatedAt
+            })
+            .ToList();
+    }
+
+    public async Task<OrderDto?> GetByIdAdminAsync(int id)
+    {
+        var order = await GetOrderQuery()
+            .SingleOrDefaultAsync(item =>
+                item.Id == id);
+
+        return order == null
+            ? null
+            : MapToDto(order);
+    }
+
+    public async Task<OrderDto?> UpdateStatusAsync(
+        int id,
+        UpdateOrderStatusDto updateDto)
+    {
+        ValidateEnum(
+            updateDto.Status,
+            "Order status");
+
+        var order = await _dbContext.Orders
+            .SingleOrDefaultAsync(item =>
+                item.Id == id);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        if (order.Status == updateDto.Status)
+        {
+            throw new InvalidOperationException(
+                $"Order is already in {order.Status} status.");
+        }
+
+        if (!IsValidStatusTransition(
+                order.Status,
+                updateDto.Status))
+        {
+            throw new InvalidOperationException(
+                $"Cannot change order status from {order.Status} to {updateDto.Status}.");
+        }
+
+        var rejectionReason =
+            NormalizeOptional(
+                updateDto.RejectionReason);
+
+        if (updateDto.Status == OrderStatus.Rejected &&
+            rejectionReason == null)
+        {
+            throw new InvalidOperationException(
+                "Rejection reason is required when rejecting an order.");
+        }
+
+        order.Status =
+            updateDto.Status;
+
+        order.RejectionReason =
+            updateDto.Status == OrderStatus.Rejected
+                ? rejectionReason
+                : null;
+
+        order.UpdatedAt =
+            DateTime.UtcNow;
+
+        _dbContext.OrderStatusHistories.Add(
+            new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                Status = updateDto.Status,
+                Notes = NormalizeOptional(
+                    updateDto.Notes),
+                Timestamp = order.UpdatedAt
+            });
+
+        await _dbContext.SaveChangesAsync();
+
+        var updatedOrder = await GetOrderQuery()
+            .SingleAsync(item =>
+                item.Id == id);
+
+        return MapToDto(updatedOrder);
+    }
+
+    // =========================================================
+    // SHARED QUERY
+    // =========================================================
 
     private IQueryable<Order> GetOrderQuery()
     {
@@ -345,12 +487,19 @@ public class OrderService : IOrderService
         return orderNumber;
     }
 
+    // =========================================================
+    // MAPPING
+    // =========================================================
+
     private static OrderDto MapToDto(Order order)
     {
         return new OrderDto
         {
-            Id = order.Id,
-            OrderNumber = order.OrderNumber,
+            Id =
+                order.Id,
+
+            OrderNumber =
+                order.OrderNumber,
 
             CustomerId =
                 order.CustomerId,
@@ -511,6 +660,10 @@ public class OrderService : IOrderService
         };
     }
 
+    // =========================================================
+    // VALIDATION
+    // =========================================================
+
     private static void ValidateEnum<TEnum>(
         TEnum value,
         string fieldName)
@@ -521,6 +674,37 @@ public class OrderService : IOrderService
             throw new InvalidOperationException(
                 $"{fieldName} is invalid.");
         }
+    }
+
+    private static bool IsValidStatusTransition(
+        OrderStatus currentStatus,
+        OrderStatus newStatus)
+    {
+        return currentStatus switch
+        {
+            OrderStatus.Pending =>
+                newStatus is
+                    OrderStatus.Accepted or
+                    OrderStatus.Rejected,
+
+            OrderStatus.Accepted =>
+                newStatus ==
+                    OrderStatus.InStitching,
+
+            OrderStatus.InStitching =>
+                newStatus ==
+                    OrderStatus.Completed,
+
+            OrderStatus.Completed =>
+                newStatus ==
+                    OrderStatus.Ready,
+
+            OrderStatus.Ready =>
+                newStatus ==
+                    OrderStatus.Delivered,
+
+            _ => false
+        };
     }
 
     private static void ValidateJsonObject(
