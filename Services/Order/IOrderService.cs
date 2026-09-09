@@ -4,6 +4,7 @@ namespace Atelier_backend.Services;
 
 public interface IOrderService
 {
+    // Customer
     Task<IReadOnlyList<OrderSummaryDto>> GetAllAsync(
         string customerId);
 
@@ -18,4 +19,15 @@ public interface IOrderService
     Task<OrderDto?> CancelAsync(
         int id,
         string customerId);
+
+    // Admin
+    Task<IReadOnlyList<AdminOrderSummaryDto>>
+        GetAllAdminAsync();
+
+    Task<OrderDto?> GetByIdAdminAsync(
+        int id);
+
+    Task<OrderDto?> UpdateStatusAsync(
+        int id,
+        UpdateOrderStatusDto updateDto);
 }
