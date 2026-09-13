@@ -87,6 +87,7 @@ builder.Services.AddScoped<
     IMeasurementProfileService,
     MeasurementProfileService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAdminSetupService, AdminSetupService>();
 
 // TODO: Database ma address register nai bhaxaina create garda address pathayeni
