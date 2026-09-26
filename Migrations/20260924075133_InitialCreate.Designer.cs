@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Atelier_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260908102727_AddFabric")]
-    partial class AddFabric
+    [Migration("20260924075133_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -2616,23 +2616,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\paras\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/sagar/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MAC\\6th-sem\\net-centric\\e-com project\\Atelier-backend\\Atelier-backend.csproj",
+      "projectUniqueName": "/Users/sagar/Desktop/atelier-backend/Atelier-backend.csproj",
       "projectName": "Atelier-backend",
-      "projectPath": "D:\\MAC\\6th-sem\\net-centric\\e-com project\\Atelier-backend\\Atelier-backend.csproj",
-      "packagesPath": "C:\\Users\\paras\\.nuget\\packages\\",
-      "outputPath": "D:\\MAC\\6th-sem\\net-centric\\e-com project\\Atelier-backend\\obj\\",
+      "projectPath": "/Users/sagar/Desktop/atelier-backend/Atelier-backend.csproj",
+      "packagesPath": "/Users/sagar/.nuget/packages/",
+      "outputPath": "/Users/sagar/Desktop/atelier-backend/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\paras\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/sagar/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -2706,7 +2702,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.401/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
