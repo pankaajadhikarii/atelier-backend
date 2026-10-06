@@ -36,12 +36,33 @@ var jwtAudience = builder.Configuration["Jwt:Audience"]
         "JWT audience is not configured.");
 
 // CORS configuration
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()?
+    .Select(origin => origin.Trim().TrimEnd('/'))
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray() ?? [];
+
+if (allowedOrigins.Length == 0 ||
+    allowedOrigins.Any(origin =>
+        !Uri.TryCreate(origin, UriKind.Absolute, out var uri) ||
+        (uri.Scheme != Uri.UriSchemeHttp &&
+         uri.Scheme != Uri.UriSchemeHttps) ||
+        uri.AbsolutePath != "/" ||
+        !string.IsNullOrEmpty(uri.Query) ||
+        !string.IsNullOrEmpty(uri.Fragment) ||
+        !string.IsNullOrEmpty(uri.UserInfo)))
+{
+    throw new InvalidOperationException(
+        "Cors:AllowedOrigins must contain one or more exact HTTP or HTTPS origins.");
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
