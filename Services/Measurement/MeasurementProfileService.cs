@@ -72,9 +72,8 @@ public class MeasurementProfileService : IMeasurementProfileService
             .AnyAsync(profile =>
                 profile.UserId == userId &&
                 profile.GarmentId == createDto.GarmentId &&
-                EF.Functions.ILike(
-                    profile.ProfileName,
-                    normalizedName));
+                profile.ProfileName.ToLower() ==
+                    normalizedName.ToLower());
 
         if (alreadyExists)
         {
@@ -130,9 +129,8 @@ public class MeasurementProfileService : IMeasurementProfileService
                 measurementProfile.Id != id &&
                 measurementProfile.UserId == userId &&
                 measurementProfile.GarmentId == profile.GarmentId &&
-                EF.Functions.ILike(
-                    measurementProfile.ProfileName,
-                    normalizedName));
+                measurementProfile.ProfileName.ToLower() ==
+                    normalizedName.ToLower());
 
         if (alreadyExists)
         {

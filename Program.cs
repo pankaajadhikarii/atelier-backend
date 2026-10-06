@@ -103,6 +103,11 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAdminSetupService, AdminSetupService>();
+builder.Services.AddHttpClient();
+builder.Services.Configure<EsewaSettings>(
+    builder.Configuration.GetSection("Esewa"));
+builder.Services.Configure<FrontendSettings>(
+    builder.Configuration.GetSection("Frontend"));
 
 // Configure Admin settings
 builder.Services.Configure<AdminSettings>(

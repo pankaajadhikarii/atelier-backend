@@ -30,6 +30,7 @@ public class OrderService : IOrderService
     {
         var orders = await _dbContext.Orders
             .AsNoTracking()
+            .Include(order => order.Fabric)
             .Include(order => order.Garment)
             .Include(order => order.Design)
             .Where(order => order.CustomerId == customerId)
@@ -42,8 +43,10 @@ public class OrderService : IOrderService
                 Id = order.Id,
                 OrderNumber = order.OrderNumber,
                 GarmentName = order.Garment.Name,
+                GarmentImageUrl = order.Garment.IconUrl,
                 DesignName = order.Design.Name,
                 DesignImageUrl = order.Design.ImageUrl,
+                FabricImageUrl = order.Fabric.ImageUrl,
                 TotalAmount = order.TotalAmount,
                 Status = order.Status,
                 PaymentStatus = order.PaymentStatus,
@@ -527,6 +530,9 @@ public class OrderService : IOrderService
 
             GarmentName =
                 order.Garment.Name,
+
+            GarmentImageUrl =
+                order.Garment.IconUrl,
 
             DesignId =
                 order.DesignId,

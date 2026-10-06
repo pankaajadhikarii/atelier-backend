@@ -9,10 +9,13 @@ public class OrderSummaryDto
     public string OrderNumber { get; set; } = string.Empty;
 
     public string GarmentName { get; set; } = string.Empty;
+    public string? GarmentImageUrl { get; set; }
 
     public string DesignName { get; set; } = string.Empty;
 
     public string? DesignImageUrl { get; set; }
+
+    public string? FabricImageUrl { get; set; }
 
     public decimal TotalAmount { get; set; }
 

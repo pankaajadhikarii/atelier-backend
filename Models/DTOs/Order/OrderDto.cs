@@ -20,6 +20,7 @@ public class OrderDto
 
     public int GarmentId { get; set; }
     public string GarmentName { get; set; } = string.Empty;
+    public string? GarmentImageUrl { get; set; }
 
     public int DesignId { get; set; }
     public string DesignName { get; set; } = string.Empty;
